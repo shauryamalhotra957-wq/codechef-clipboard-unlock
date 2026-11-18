@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <div class="popup-header">
+      <span class="popup-logo">⌨️</span>
+      <div>
+        <h1 class="popup-title">CodeChef Clipboard Unlock</h1>
+        <p class="popup-subtitle" id="site-status">Checking...</p>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="status-bar">
+      <div class="status-item">
+        <span class="status-dot" id="site-dot"></span>
+        <span id="site-label">Site</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot" id="editor-dot"></span>
+        <span id="editor-label">Editor</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot" id="clipboard-dot"></span>
+        <span id="clipboard-label">Clipboard</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-section">
+      <button class="action-btn primary" id="btn-paste">
+        <span>📋</span> Paste Code
+      </button>
+      <button class="action-btn" id="btn-copy">
+        <span>📄</span> Copy Editor Code
+      </button>
+      <div class="action-row">
+        <button class="action-btn small" id="btn-clear">
+          🗑️ Clear
+        </button>
+        <button class="action-btn small" id="btn-save">
+          💾 Save
+        </button>
+      </div>
+    </div>
+
+    <!-- Manual Paste Fallback -->
+    <div class="fallback-section" id="fallback-section" style="display: none;">
+      <p class="fallback-label">Clipboard blocked? Paste your code here:</p>
+      <textarea id="manual-code" placeholder="Paste your code here, then click Insert..." rows="5"></textarea>
+      <button class="action-btn primary" id="btn-manual-paste">
+        ⚡ Insert into Editor
+      </button>
+    </div>
+
+    <!-- Saved Solutions -->
+    <div class="solutions-section">
+      <div class="section-header" id="toggle-solutions">
+        <span>💾 Saved Solutions</span>
+        <span class="chevron" id="solutions-chevron">▸</span>
+      </div>
+      <div class="solutions-list" id="solutions-list" style="display: none;">
+        <p class="empty-msg" id="empty-msg">No saved solutions yet.</p>
+      </div>
+    </div>
+
+    <!-- Shortcuts -->
+    <div class="shortcuts-section">
+      <div class="section-header" id="toggle-shortcuts">
+        <span>⌨️ Shortcuts</span>
+        <span class="chevron" id="shortcuts-chevron">▸</span>
+      </div>
+      <div class="shortcuts-list" id="shortcuts-list" style="display: none;">
+        <div class="shortcut-row">
+          <kbd>Alt+Shift+V</kbd>
+          <span>Paste code</span>
+        </div>
+        <div class="shortcut-row">
+          <kbd>Alt+Shift+C</kbd>
+          <span>Copy editor code</span>
+        </div>
+        <div class="shortcut-row">
+          <kbd>Alt+Shift+S</kbd>
+          <span>Save solution</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="popup-footer">
+      <span>v1.0.0</span>
+      <a href="#" id="btn-settings">Settings</a>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCU Settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1e1e2e; color: #cdd6f4;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px; padding: 32px;
+      max-width: 600px; margin: 0 auto;
+    }
+    h1 { font-size: 20px; margin-bottom: 6px; }
+    .subtitle { color: #a6adc8; font-size: 12px; margin-bottom: 24px; }
+    .section { background: #181825; border: 1px solid #313244; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .section h2 { font-size: 14px; color: #a6adc8; margin-bottom: 12px; font-weight: 600; }
+    .setting-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid #313244;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-label { font-size: 13px; }
+    .setting-desc { font-size: 11px; color: #585b70; margin-top: 2px; }
+    .toggle {
+      position: relative; width: 40px; height: 22px;
+      background: #45475a; border-radius: 11px; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle.on { background: #5b4fc4; }
+    .toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #cdd6f4; transition: transform 0.2s;
+    }
+    .toggle.on::after { transform: translateX(18px); }
+    .danger-btn {
+      background: #45475a; color: #f38ba8; border: 1px solid #f38ba8;
+      padding: 8px 16px; border-radius: 6px; cursor: pointer;
+      font-family: inherit; font-size: 12px; margin-top: 8px;
+    }
+    .danger-btn:hover { background: #f38ba8; color: #1e1e2e; }
+    .info { font-size: 11px; color: #585b70; margin-top: 8px; }
+    .shortcut-info { font-size: 12px; color: #a6adc8; line-height: 1.8; }
+    kbd {
+      background: #313244; border: 1px solid #45475a; border-radius: 4px;
+      padding: 2px 6px; font-family: 'Consolas', monospace; font-size: 11px; color: #cdd6f4;
+    }
+    .back-link {
+      display: inline-block; margin-bottom: 16px;
+      color: #89b4fa; text-decoration: none; font-size: 12px;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .saved-msg {
+      color: #a6e3a1; font-size: 12px; margin-top: 6px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .saved-msg.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <h1>⌨️ CodeChef Clipboard Unlock</h1>
+  <p class="subtitle">Settings & Configuration</p>
+
+  <div class="section">
+    <h2>General</h2>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Show floating toolbar</div>
+        <div class="setting-desc">Display the toolbar on CodeChef pages</div>
+      </div>
+      <div class="toggle on" id="toggle-toolbar" data-key="showToolbar"></div>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Auto-detect editor</div>
+        <div class="setting-desc">Automatically detect Monaco/CodeMirror/Ace</div>
+      </div>
+      <div class="toggle on" id="toggle-detect" data-key="autoDetect"></div>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Show toast notifications</div>
+        <div class="setting-desc">Show success/error messages after actions</div>
+      </div>
+      <div class="toggle on" id="toggle-toast" data-key="showToast"></div>
+    </div>
+    <span class="saved-msg" id="saved-msg">✓ Saved</span>
+  </div>
+
+  <div class="section">
+    <h2>Keyboard Shortcuts</h2>
+    <div class="shortcut-info">
+      <p><kbd>Alt+Shift+V</kbd> — Paste code into editor</p>
+      <p><kbd>Alt+Shift+C</kbd> — Copy code from editor</p>
+      <p><kbd>Alt+Shift+S</kbd> — Save current solution</p>
+      <p class="info" style="margin-top: 10px;">
+        To customize shortcuts, go to <strong>chrome://extensions/shortcuts</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Data</h2>
+    <p class="setting-desc" style="margin-bottom: 10px;">All solutions are stored locally in your browser. Nothing is sent externally.</p>
+    <button class="danger-btn" id="btn-clear-all">🗑️ Delete All Saved Solutions</button>
+    <p class="info" id="clear-msg"></p>
+  </div>
+
+  <div class="section">
+    <h2>About</h2>
+    <p class="setting-desc">
+      CodeChef Clipboard Unlock v1.0.0<br>
+      Reliably paste code into CodeChef's editor.<br>
+      Copy from ChatGPT → Press Alt+Shift+V → Done.
+    </p>
+  </div>
+
+  <script>
+    // Load settings
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { settings = {} } = await chrome.storage.local.get('settings');
+      const defaults = { showToolbar: true, autoDetect: true, showToast: true };
+      const merged = { ...defaults, ...settings };
+
+      document.querySelectorAll('.toggle').forEach(el => {
+        const key = el.dataset.key;
+        if (merged[key]) {
+          el.classList.add('on');
+        } else {
+          el.classList.remove('on');
+        }
+
+        el.addEventListener('click', async () => {
+          el.classList.toggle('on');
+          const { settings: current = {} } = await chrome.storage.local.get('settings');
+          current[key] = el.classList.contains('on');
+          await chrome.storage.local.set({ settings: current });
+
+          const msg = document.getElementById('saved-msg');
+          msg.classList.add('show');
+          setTimeout(() => msg.classList.remove('show'), 1500);
+        });
+      });
+
+      document.getElementById('btn-clear-all').addEventListener('click', async () => {
+        if (confirm('Delete all saved solutions? This cannot be undone.')) {
+          await chrome.storage.local.set({ solutions: {} });
+          document.getElementById('clear-msg').textContent = '✓ All solutions deleted.';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

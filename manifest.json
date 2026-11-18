@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "CodeChef Clipboard Unlock",
+  "version": "1.0.0",
+  "description": "Reliably paste code into CodeChef's editor. Copy from ChatGPT, press Alt+Shift+V, done.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "clipboardRead",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://www.codechef.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.codechef.com/*"],
+      "js": ["content.js"],
+      "css": ["toolbar.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "paste-code": {
+      "suggested_key": {
+        "default": "Alt+Shift+V"
+      },
+      "description": "Paste code into CodeChef editor"
+    },
+    "copy-code": {
+      "suggested_key": {
+        "default": "Alt+Shift+C"
+      },
+      "description": "Copy code from CodeChef editor"
+    },
+    "save-solution": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Save current solution"
+    }
+  }
+}
